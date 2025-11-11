@@ -2,7 +2,7 @@ PROCESSOR 18F4550
 #include <xc.inc>
 
 ;=============================
-; CONFIGURACIÓN DE FUSES
+; CONFIGURACIÃ“N DE FUSES
 ;=============================
 ;CONFIG1L dir 300000h 		20
 		CONFIG	PLLDIV=1	 	; 
@@ -28,11 +28,11 @@ PROCESSOR 18F4550
 		CONFIG	MCLRE=ON        ;MASTER CLEAR HABILITADO
 		;CONFIG4L DIR 300006H	   	81
 		CONFIG	STVREN=ON	 	;SI EL STACK SE LLENA CAUSE RESET		
-		CONFIG	LVP=OFF		 	;PROGRAMACIÒN EN BAJO VOLTAJE APAGADO
+		CONFIG	LVP=OFF		 	;PROGRAMACIÃ’N EN BAJO VOLTAJE APAGADO
 		CONFIG	ICPRT=OFF	 	;REGISTRO ICPORT DESHABILITADO
 		CONFIG	XINST=OFF  		;SET DE EXTENCION DE INSTRUCCIONES Y DIRECCIONAMIENTO INDEXADO DESHABILITADO
 		;CONFIG5L DIR 300008H 		0F
-		CONFIG	CP0=OFF		 	;LOS BLOQUES DEL CÒDIGO DE PROGRAMA
+		CONFIG	CP0=OFF		 	;LOS BLOQUES DEL CÃ’DIGO DE PROGRAMA
 		CONFIG	CP1=OFF         ;NO ESTAN PROTEGIDOS
 		CONFIG	CP2=OFF		 
 		CONFIG	CP3=OFF
@@ -59,7 +59,7 @@ PROCESSOR 18F4550
 		;CONFIG7H DIR 30000DH		40
 		CONFIG	 EBTRB=OFF	 	;TABLAS NO PROTEGIDAS
 ;=============================
-; Declaración de variables
+; DeclaraciÃ³n de variables
 ;=============================
 PSECT udata_acs
 counter: DS 1
@@ -74,7 +74,7 @@ _reset:
     GOTO _start  
 
 ;=============================
-; INICIALIZACIÓN DEL SISTEMA
+; INICIALIZACIÃ“N DEL SISTEMA
 ;=============================
 ORG 0x20
 _start:
@@ -168,7 +168,7 @@ hexa_main:
     MOVFF   datoB, PORTB
     CALL    ret_1seg
     
-    CALL check_portA
+    ;CALL check_portA
     
     MOVF    counter, W, A
     BTFSS   STATUS, 2, A
@@ -193,7 +193,7 @@ octal_main:
     MOVFF   datoB, PORTB
     CALL    ret_1seg
 
-    CALL check_portA
+    ;CALL check_portA
     
     MOVF    counter, W, A
     SUBLW   0x0E
@@ -220,7 +220,7 @@ decimal_main:
     MOVFF   datoB, PORTB
     CALL    ret_1seg
 
-   CALL check_portA
+   ;CALL check_portA
     
     MOVF    counter, W, A
     BTFSS   STATUS, 2, A

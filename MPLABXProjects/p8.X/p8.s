@@ -1,0 +1,138 @@
+PROCESSOR 18F4550
+#include <xc.inc>
+
+;=============================
+; CONFIGURACIÓN DE FUSES
+;=============================
+;CONFIG1L dir 300000h 		20
+		CONFIG	PLLDIV=1	 	; 
+		CONFIG	CPUDIV=OSC1_PLL2 ;CUANDO SE USA 	
+		CONFIG	USBDIV=2
+
+		;CONFIG1H dir 300001h	   08
+		CONFIG	FOSC=INTOSCIO_EC	;OSCILADOR INTERNO, RA6 COMO PIN, USB USA OSC EC
+		CONFIG	FCMEN=OFF       ;DESHABILITDO EL MONITOREO DEL RELOJ
+		CONFIG	IESO=OFF
+		;CONFIG2L DIR 300002H	   	38
+		CONFIG	PWRT=ON         ;PWRT HABILITADO
+		;CONFIG  BOR=OFF		 	;BROWN OUT RESET DESHABILITADO
+		CONFIG BORV=3			;RESET AL MINIMO VOLTAJE NO UTILZADO EN ESTE CASO
+		CONFIG	VREGEN=ON	 	;REULADOR DE USB ENCENDIDO
+		;CONFIG2H DIR 300003H	   	1E
+		CONFIG	WDT=OFF         ;WACH DOG DESHABILITADO
+		CONFIG WDTPS=32768      ;TIMER DEL WATCHDOG 
+		;CONFIG3H DIR 300005H 	   	81
+		CONFIG	CCP2MX=ON	 	;CCP2 MULTIPLEXADAS CON RC1	
+		CONFIG	PBADEN=OFF      ;PUERTO B PINES DEL 0 AL 4 ENTRADAS DIGITALES
+		CONFIG  LPT1OSC=OFF	 	;TIMER1 CONFIURADO PARA OPERAR EN BAJA POTENCIA
+		CONFIG	MCLRE=ON        ;MASTER CLEAR HABILITADO
+		;CONFIG4L DIR 300006H	   	81
+		CONFIG	STVREN=ON	 	;SI EL STACK SE LLENA CAUSE RESET		
+		CONFIG	LVP=OFF		 	;PROGRAMACIÒN EN BAJO VOLTAJE APAGADO
+		CONFIG	ICPRT=OFF	 	;REGISTRO ICPORT DESHABILITADO
+		CONFIG	XINST=OFF  		;SET DE EXTENCION DE INSTRUCCIONES Y DIRECCIONAMIENTO INDEXADO DESHABILITADO
+		;CONFIG5L DIR 300008H 		0F
+		CONFIG	CP0=OFF		 	;LOS BLOQUES DEL CÒDIGO DE PROGRAMA
+		CONFIG	CP1=OFF         ;NO ESTAN PROTEGIDOS
+		CONFIG	CP2=OFF		 
+		CONFIG	CP3=OFF
+		;CONFIG5H DR 300009H  		80
+		CONFIG	CPB=ON		 	;SECTOR BOOT ESTA PROTEGIDO
+		CONFIG	CPD=OFF		 	;EEPROM N PROTEGIDA
+		;CONFIG6L DIR 30000AH 		0F
+		CONFIG	 WRT0=OFF	 	;BLOQUES NO PROTEGIDOS CONTRA ESCRITURA
+		CONFIG	 WRT1=OFF
+		CONFIG	 WRT2=OFF
+		CONFIG	 WRT3=OFF
+
+		;CONFIG6H DIR 30000BH		A0
+		CONFIG	 WRTC=OFF	 	;CONFIGURACION DE REGISTROS NO PROTEGIDO
+		CONFIG	 WRTB=ON	 	;BLOQUE BOOTEBLE NO PROTEGIDO
+		CONFIG	 WRTD=OFF	 	;EEPROMDE DATOS NO PROTGIDA
+
+		;CONFIG7L DIR 30000CH		0F
+		CONFIG	 EBTR0=OFF	 	;TABLAS DE LETURA NO PROTEGIDAS
+		CONFIG	 EBTR1=OFF
+		CONFIG	 EBTR2=OFF
+		CONFIG	 EBTR3=OFF
+
+		;CONFIG7H DIR 30000DH		40
+		CONFIG	 EBTRB=OFF	 	;TABLAS NO PROTEGIDAS
+;=============================
+; Declaración de variables
+;=============================
+_var:
+PSECT udata_acs
+    datoB: DS 1     
+
+;=============================
+; Vector de reset
+;=============================
+_vector_reset:
+PSECT CODE, RELOC=2, ABS
+
+_reset:
+    GOTO _start  
+
+;=============================
+; INICIALIZACIÓN DEL SISTEMA
+;=============================
+ORG 0x20            
+
+_start:
+    CLRF    ADCON0, A    
+    MOVLW   0x0F            ; Todos los pines como digitales
+    MOVWF   ADCON1, A       ; ? CORREGIDO: ADCON1, no ADCON0
+
+    MOVLW   0x07            ; Desactiva comparadores
+    MOVWF   CMCON, A
+
+    MOVLW   0xFF            ; Oscilador interno a 8 MHz
+    MOVWF   OSCCON, A
+
+    MOVLW 0xFF
+    MOVWF TRISA, A
+    
+    
+    CLRF    TRISB, A        ; PORTB como salida
+    CLRF    PORTB, A        ; Limpia PORTB
+    CLRF datoB, A
+    
+    GOTO main
+;====================================================
+; TABLA
+;====================================================
+tabla7seg:
+    ADDWF   PCL, F,  A            
+    RETLW   0x7D ; 0 - G
+    RETLW   0x77 ; 1 - A
+    RETLW   0x7F ; 2 - B
+    RETLW   0x50 ; 3 - R
+    RETLW   0x06 ; 4 - I
+    RETLW   0x79 ; 5 - E
+    RETLW   0x38 ; 6 - L
+    RETLW   0x73 ; 7 - P
+    RETLW   0x77 ; 8 - A
+    RETLW   0x5B ; 9 - Z
+    RETLW   0x77 ;10 - A
+    RETLW   0x38 ;11 - L
+    RETLW   0x3F ;12 - O
+    RETLW   0x54 ;13 - N
+    RETLW   0x6D ;14 - S
+    RETLW   0x3F ;15 - O
+    
+    
+;====================================================
+; BUCLE PRINCIPAL
+;====================================================
+main:
+    MOVF    PORTA, W, A       
+    ANDLW   00011110B              ; Enmascaramiento  
+    CALL    tabla7seg         
+    MOVWF   datoB, A
+    MOVFF   datoB, PORTB      
+    GOTO    main  
+    
+
+
+END

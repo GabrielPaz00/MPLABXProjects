@@ -1,0 +1,12 @@
+# 1. Ignorar todo por defecto
+*
+
+# 2. PERO, no ignorar las carpetas (para que Git pueda ver su contenido)
+!*/
+
+# 3. PERO, no ignorar los archivos .s
+!*.s
+
+# 4. No ignorar los archivos raíz que quieras conservar
+!/.gitignore
+!/README.md

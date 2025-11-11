@@ -168,7 +168,7 @@ hexa_main:
     MOVFF   datoB, PORTB
     CALL    ret_1seg
     
-    ;CALL check_portA
+    CALL check_portA
     
     MOVF    counter, W, A
     BTFSS   STATUS, 2, A
@@ -193,7 +193,7 @@ octal_main:
     MOVFF   datoB, PORTB
     CALL    ret_1seg
 
-    ;CALL check_portA
+    CALL check_portA
     
     MOVF    counter, W, A
     SUBLW   0x0E
@@ -220,7 +220,7 @@ decimal_main:
     MOVFF   datoB, PORTB
     CALL    ret_1seg
 
-   ;CALL check_portA
+   CALL check_portA
     
     MOVF    counter, W, A
     BTFSS   STATUS, 2, A
